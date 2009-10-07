@@ -141,9 +141,7 @@ public class CGService {
 	
 	public Document addItemQuantity(String customerCode, String itemCode, int quantity) throws Exception {
 	    HashMap<String, String> paramMap = new HashMap<String, String>();
-	    if(quantity > 1){
-	        paramMap.put("quantity", String.valueOf(quantity));
-	    }
+	    paramMap.put("quantity", String.valueOf(quantity));
 	    
 	    String relativeUrl = "/customers/add-item-quantity/productCode/" + getProductCode() + 
 	                         "/code/" + customerCode + "/itemCode/" + itemCode;
