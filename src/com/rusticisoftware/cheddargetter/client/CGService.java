@@ -135,6 +135,10 @@ public class CGService {
 		return makeServiceCall(relativeUrl, paramMap);
 	}
 	
+	public Document cancelSubscription(String customerCode) throws Exception {
+		return makeServiceCall("/customers/cancel/productCode/" + getProductCode() + "/code/" + customerCode, null);
+	}
+	
 	public Document addItemQuantity(String customerCode, String itemCode) throws Exception {
 	    return addItemQuantity(customerCode, itemCode, 1);
 	}
