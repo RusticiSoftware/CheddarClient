@@ -174,6 +174,24 @@ public class CGService {
 				cal.get(Calendar.MONTH), cal.get(Calendar.YEAR));
 	}
 	
+	public boolean isLatestSubscriptionCanceled(String customerCode) throws Exception {
+		CGCustomer cgCustomer;
+		try { cgCustomer = getCustomer(customerCode); }
+		catch (Exception e) { return false; }
+		
+		List<CGSubscription> subs = cgCustomer.getSubscriptions();
+		if(subs == null || subs.size() == 0){
+			return false;
+		}
+		
+		CGSubscription sub = subs.get(0);
+		if(sub.getCanceledDatetime() == null){
+			return false;
+		}
+
+		return true;
+	}
+	
 	protected Document makeServiceCall(String path, Map<String,String> paramMap) throws Exception {
 		String fullPath = CG_SERVICE_ROOT + path;
 		String encodedParams = encodeParamMap(paramMap);
@@ -185,6 +203,7 @@ public class CGService {
 			log.log(Level.WARNING, "Error calling service at " + path, cge);
 			throw cge;
 		}
+		//log.log(Level.INFO, "Response from CG: " + XmlUtils.getXmlString(responseDoc));
 		return responseDoc;
 	}
 	

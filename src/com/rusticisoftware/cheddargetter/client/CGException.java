@@ -24,4 +24,17 @@ public class CGException extends Exception {
 	public String toString(){
 		return "CGException: Code = " + getCode() + " Message = " + this.getMessage();
 	}
+	
+	public String getParsedMessage(){
+		try {
+			String entireMessage = this.getMessage();
+			int startIndex = this.getMessage().lastIndexOf("=>");
+			String parsedMessage = entireMessage.substring(startIndex+2);
+			int endIndex = parsedMessage.indexOf(")");
+			parsedMessage = parsedMessage.substring(0, endIndex-1);
+			return parsedMessage.trim();
+		} catch (Exception e) {
+			return null;
+		}
+	}
 }
