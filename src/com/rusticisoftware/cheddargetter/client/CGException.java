@@ -38,4 +38,8 @@ public class CGException extends Exception {
 				(auxCode == 0 ? "" : ", AuxCode = " + auxCode) +
 				", Message = " + this.getMessage();
 	}
+	
+	public boolean isGatewayError(){
+		return (auxCode != 0 && (auxCode < 5000 || auxCode >= 7000));
+	}
 }
