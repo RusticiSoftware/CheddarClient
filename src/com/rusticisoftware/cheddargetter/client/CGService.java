@@ -270,12 +270,16 @@ public class CGService {
 		return URLEncoder.encode(paramName, "UTF-8") + "=" + URLEncoder.encode(paramVal, "UTF-8");
 	}
 	
-	protected boolean checkResponseForError(Document doc) throws CGException {
+	protected boolean checkResponseForError(Document doc) throws CGException, Exception {
 		Element root = doc.getDocumentElement();
 		if(root.getNodeName().equals("error")){
 			String code = root.getAttribute("code");
+			String auxCode = root.getAttribute("auxCode");
+			if(auxCode == null || auxCode.length() == 0){
+				auxCode = "0";
+			}
 			String message = root.getTextContent();
-			throw new CGException(Integer.parseInt(code), message);
+			throw new CGException(Integer.parseInt(code), Integer.parseInt(auxCode), message);
 		}
 		return true;
 	}
