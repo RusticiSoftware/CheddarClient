@@ -1,6 +1,8 @@
 package com.rusticisoftware.cheddargetter.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -97,6 +99,14 @@ public class CGSubscription {
 			for(Element invoice : invoiceList){
 				this.invoices.add(new CGInvoice(invoice));
 			}
+			
+			//Sort invoices by billing date (most recent first)
+			Collections.sort(this.invoices, 
+				new Comparator<CGInvoice>() {
+					public int compare(CGInvoice inv1, CGInvoice inv2) {
+						return inv2.getBillingDatetime().compareTo(inv1.getBillingDatetime());
+					}
+				});
 		}
 	}
 }

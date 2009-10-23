@@ -1,6 +1,8 @@
 package com.rusticisoftware.cheddargetter.client;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -76,6 +78,14 @@ public class CGCustomer {
 			for(Element sub : subsList){
 				this.subscriptions.add(new CGSubscription(sub));
 			}
+			
+			//Sort subscriptions by create date (most recent first)
+			Collections.sort(this.subscriptions, 
+				new Comparator<CGSubscription>() {
+					public int compare(CGSubscription sub1, CGSubscription sub2) {
+						return sub2.getCreatedDatetime().compareTo(sub1.getCreatedDatetime());
+					}
+				});
 		}
 	}
 }
