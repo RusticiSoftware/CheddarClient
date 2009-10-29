@@ -86,7 +86,7 @@ public class CGService {
 		return makeServiceCall("/customers/get/productCode/" + getProductCode(), null);
 	}
 	
-	public Document createNewCustomer(String custCode, String firstName, String lastName, 
+	public CGCustomer createNewCustomer(String custCode, String firstName, String lastName, 
 			String email, String company, String subscriptionPlanCode, String ccFirstName,
 			String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear, 
 			String ccZip) throws Exception {
@@ -111,8 +111,11 @@ public class CGService {
 			paramMap.put("subscription[ccExpiration]", ccExpireMonth + "/" + ccExpireYear);
 			paramMap.put("subscription[ccZip]", ccZip);
 		}
-		
-		return makeServiceCall("/customers/new/productCode/" + getProductCode(), paramMap);
+
+		Document doc = makeServiceCall("/customers/new/productCode/" + getProductCode(), paramMap);
+		Element root = doc.getDocumentElement();
+		Element customer = XmlUtils.getFirstChildByTagName(root, "customer");
+		return new CGCustomer(customer);
 	}
 	
 	public Document updateSubscription(String customerCode, String planCode, String ccFirstName, String ccLastName,
@@ -190,6 +193,17 @@ public class CGService {
 		}
 
 		return true;
+	}
+	
+	public int getCurrentItemUsage(String customerCode, String itemCode) throws Exception{
+	    CGCustomer cgCust = getCustomer(customerCode);
+	    List<CGItem> currentItems = cgCust.getSubscriptions().get(0).getItems();
+	    for(CGItem item : currentItems){
+	        if(item.getCode().equals(itemCode)){
+	            return item.getQuantity();
+	        }
+	    }
+	    throw new Exception("Couldn't find item with code " + itemCode);
 	}
 	
 	protected Document makeServiceCall(String path, Map<String,String> paramMap) throws Exception {
