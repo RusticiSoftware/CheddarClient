@@ -14,6 +14,8 @@ public class CGSubscription {
 	
 	protected String id;
 	protected String gatewayToken;
+	protected String ccFirstName;
+	protected String ccLastName;
 	protected String ccType;
 	protected String ccLastFour;
 	protected Date ccExpirationDate;
@@ -29,6 +31,14 @@ public class CGSubscription {
 
 	public String getGatewayToken() {
 		return gatewayToken;
+	}
+	
+	public String getCcFirstName() {
+		return ccFirstName;
+	}
+	
+	public String getCcLastName() {
+		return ccLastName;
 	}
 
 	public String getCcType() {
@@ -66,6 +76,8 @@ public class CGSubscription {
 	public CGSubscription(Element elem){
 		this.id = elem.getAttribute("id");
 		this.gatewayToken = XmlUtils.getNamedElemValue(elem, "gatewayToken");
+		this.ccFirstName = XmlUtils.getNamedElemValue(elem, "ccFirstName");
+		this.ccLastName = XmlUtils.getNamedElemValue(elem, "ccLastName");
 		this.ccType = XmlUtils.getNamedElemValue(elem, "ccType");
 		this.ccLastFour = XmlUtils.getNamedElemValue(elem, "ccLastFour");
 

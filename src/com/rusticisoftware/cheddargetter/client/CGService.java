@@ -89,7 +89,7 @@ public class CGService {
 	public CGCustomer createNewCustomer(String custCode, String firstName, String lastName, 
 			String email, String company, String subscriptionPlanCode, String ccFirstName,
 			String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear, 
-			String ccZip) throws Exception {
+			String ccCardCode, String ccZip) throws Exception {
 		
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("code", custCode);
@@ -109,7 +109,12 @@ public class CGService {
 			paramMap.put("subscription[ccLastName]", ccLastName);
 			paramMap.put("subscription[ccNumber]", ccNumber);
 			paramMap.put("subscription[ccExpiration]", ccExpireMonth + "/" + ccExpireYear);
-			paramMap.put("subscription[ccZip]", ccZip);
+			if(ccCardCode != null){
+				paramMap.put("subscription[ccCardCode]", ccCardCode);
+			}
+			if(ccZip != null){
+				paramMap.put("subscription[ccZip]", ccZip);
+			}
 		}
 
 		Document doc = makeServiceCall("/customers/new/productCode/" + getProductCode(), paramMap);
@@ -119,7 +124,7 @@ public class CGService {
 	}
 	
 	public Document updateSubscription(String customerCode, String planCode, String ccFirstName, String ccLastName,
-			String ccNumber, String ccExpireMonth, String ccExpireYear, String ccZip) throws Exception {
+			String ccNumber, String ccExpireMonth, String ccExpireYear, String ccCardCode, String ccZip) throws Exception {
 		
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("planCode", planCode);
@@ -131,7 +136,12 @@ public class CGService {
 			paramMap.put("ccLastName", ccLastName);
 			paramMap.put("ccNumber", ccNumber);
 			paramMap.put("ccExpiration", ccExpireMonth + "/" + ccExpireYear);
-			paramMap.put("ccZip", ccZip);
+			if(ccCardCode != null){
+				paramMap.put("ccCardCode", ccCardCode);
+			}
+			if(ccZip != null){
+				paramMap.put("ccZip", ccZip);
+			}
 		}
 		
 		String relativeUrl = "/customers/edit-subscription/productCode/" + getProductCode() + "/code/" + customerCode;
@@ -173,7 +183,8 @@ public class CGService {
 		
 		Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
 		cal.setTime(sub.getCcExpirationDate());
-		return new CreditCardData(sub.getCcType(), sub.getCcLastFour(), 
+		return new CreditCardData(sub.getCcFirstName(), sub.getCcLastName(), 
+				sub.getCcType(), sub.getCcLastFour(), 
 				cal.get(Calendar.MONTH), cal.get(Calendar.YEAR));
 	}
 	
