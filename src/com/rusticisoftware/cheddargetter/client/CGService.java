@@ -222,13 +222,13 @@ public class CGService {
 		String encodedParams = encodeParamMap(paramMap);
 		String response = postTo(fullPath, getUserName(), getPassword(), encodedParams);
 		Document responseDoc = XmlUtils.parseXmlString(response);
+		log.log(Level.INFO, "Response from CG: " + XmlUtils.getXmlString(responseDoc));
 		try {
 			checkResponseForError(responseDoc);
 		} catch (CGException cge) {
 			log.log(Level.WARNING, "Error calling service at " + path, cge);
 			throw cge;
 		}
-		//log.log(Level.INFO, "Response from CG: " + XmlUtils.getXmlString(responseDoc));
 		return responseDoc;
 	}
 	
