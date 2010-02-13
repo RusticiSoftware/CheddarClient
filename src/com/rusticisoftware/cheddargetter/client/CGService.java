@@ -24,7 +24,7 @@ import org.w3c.dom.Element;
 
 import sun.misc.BASE64Encoder;
 
-public class CGService {
+public class CGService implements ICGService {
 	private static Logger log = Logger.getLogger(CGService.class.toString());
 	
 	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
@@ -38,21 +38,39 @@ public class CGService {
 	private String password;
 	private String productCode;
 
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getUserName()
+	 */
 	public String getUserName(){
 		return userName;
 	}
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#setUserName(java.lang.String)
+	 */
 	public void setUserName(String userName){
 		this.userName = userName;
 	}
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getPassword()
+	 */
 	public String getPassword(){
 		return password;
 	}
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#setPassword(java.lang.String)
+	 */
 	public void setPassword(String password){
 		this.password = password;
 	}
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getProductCode()
+	 */
 	public String getProductCode(){
 		return productCode;
 	}
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#setProductCode(java.lang.String)
+	 */
 	public void setProductCode(String productCode){
 		this.productCode = productCode;
 	}
@@ -63,6 +81,9 @@ public class CGService {
 		setProductCode(productCode);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getCustomer(java.lang.String)
+	 */
 	public CGCustomer getCustomer(String custCode) throws Exception {
 		Document doc = makeServiceCall("/customers/get/productCode/" + getProductCode() + "/code/" + custCode, null);
 		Element root = doc.getDocumentElement();
@@ -70,6 +91,9 @@ public class CGService {
 		return new CGCustomer(customer);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#customerExists(java.lang.String)
+	 */
 	public boolean customerExists(String custCode) {
 		boolean exists = false;
 		try {
@@ -82,10 +106,16 @@ public class CGService {
 		return exists;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getAllCustomers()
+	 */
 	public Document getAllCustomers() throws Exception {
 		return makeServiceCall("/customers/get/productCode/" + getProductCode(), null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#createNewCustomer(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	public CGCustomer createNewCustomer(String custCode, String firstName, String lastName, 
 			String email, String company, String subscriptionPlanCode, String ccFirstName,
 			String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear, 
@@ -123,6 +153,9 @@ public class CGService {
 		return new CGCustomer(customer);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#updateSubscription(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
 	public Document updateSubscription(String customerCode, String planCode, String ccFirstName, String ccLastName,
 			String ccNumber, String ccExpireMonth, String ccExpireYear, String ccCardCode, String ccZip) throws Exception {
 		
@@ -148,14 +181,23 @@ public class CGService {
 		return makeServiceCall(relativeUrl, paramMap);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#cancelSubscription(java.lang.String)
+	 */
 	public Document cancelSubscription(String customerCode) throws Exception {
 		return makeServiceCall("/customers/cancel/productCode/" + getProductCode() + "/code/" + customerCode, null);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#addItemQuantity(java.lang.String, java.lang.String)
+	 */
 	public Document addItemQuantity(String customerCode, String itemCode) throws Exception {
 	    return addItemQuantity(customerCode, itemCode, 1);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#addItemQuantity(java.lang.String, java.lang.String, int)
+	 */
 	public Document addItemQuantity(String customerCode, String itemCode, int quantity) throws Exception {
 	    HashMap<String, String> paramMap = new HashMap<String, String>();
 	    paramMap.put("quantity", String.valueOf(quantity));
@@ -166,6 +208,9 @@ public class CGService {
 	    
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getLatestCreditCardData(java.lang.String)
+	 */
 	public CreditCardData getLatestCreditCardData(String customerCode) throws Exception {
 		CGCustomer cgCustomer;
 		try { cgCustomer = getCustomer(customerCode); }
@@ -188,6 +233,9 @@ public class CGService {
 				cal.get(Calendar.MONTH), cal.get(Calendar.YEAR));
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#isLatestSubscriptionCanceled(java.lang.String)
+	 */
 	public boolean isLatestSubscriptionCanceled(String customerCode) throws Exception {
 		CGCustomer cgCustomer;
 		try { cgCustomer = getCustomer(customerCode); }
@@ -206,6 +254,9 @@ public class CGService {
 		return true;
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getCurrentItemUsage(java.lang.String, java.lang.String)
+	 */
 	public int getCurrentItemUsage(String customerCode, String itemCode) throws Exception{
 	    CGCustomer cgCust = getCustomer(customerCode);
 	    List<CGItem> currentItems = cgCust.getSubscriptions().get(0).getItems();
