@@ -114,9 +114,9 @@ public class XmlUtils {
     public static String getNamedElemValue(Element parent, String elementName)
     {
         String val = null;
-        NodeList list = parent.getElementsByTagName(elementName);
-        if (list.getLength() > 0) {
-            val = ((Element)list.item(0)).getTextContent();
+        List<Element> list = getChildrenByTagName(parent, elementName);
+        if (list.size() > 0) {
+            val = list.get(0).getTextContent();
         }
         return val;
     }
@@ -129,10 +129,10 @@ public class XmlUtils {
     /// <returns></returns>
     public static String getNamedElemXml(Element parent, String elementName) throws Exception
     {
-        String val = null;
-        NodeList list = parent.getElementsByTagName(elementName);
-        if (list.getLength() > 0) {
-            val = getXmlString(list.item(0));
+    	String val = null;
+        List<Element> list = getChildrenByTagName(parent, elementName);
+        if (list.size() > 0) {
+            val = XmlUtils.getXmlString(list.get(0));
         }
         return val;
     }
