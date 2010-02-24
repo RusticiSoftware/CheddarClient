@@ -75,6 +75,9 @@ public class CGService implements ICGService {
 		this.productCode = productCode;
 	}
 	
+	public CGService(){
+	}
+	
 	public CGService(String userName, String password, String productCode){
 		setUserName(userName);
 		setPassword(password);
