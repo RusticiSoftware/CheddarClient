@@ -156,6 +156,57 @@ public class CGService implements ICGService {
 		return new CGCustomer(customer);
 	}
 	
+	public CGCustomer updateCustomerAndSubscription(String custCode, String firstName, String lastName, 
+			String email, String company, String subscriptionPlanCode, String ccFirstName,
+			String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear, 
+			String ccCardCode, String ccZip) throws Exception {
+		
+		HashMap<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("firstName", firstName);
+		paramMap.put("lastName", lastName);
+		paramMap.put("email", email);
+		if(company != null){
+			paramMap.put("company", company);
+		}
+		
+		paramMap.put("subscription[planCode]", subscriptionPlanCode);
+		
+		//If plan is free, no cc information needed, so we just check
+		//ccNumber field and assume the rest are there or not
+		if(ccNumber != null){
+			paramMap.put("subscription[ccFirstName]", ccFirstName);
+			paramMap.put("subscription[ccLastName]", ccLastName);
+			paramMap.put("subscription[ccNumber]", ccNumber);
+			paramMap.put("subscription[ccExpiration]", ccExpireMonth + "/" + ccExpireYear);
+			if(ccCardCode != null){
+				paramMap.put("subscription[ccCardCode]", ccCardCode);
+			}
+			if(ccZip != null){
+				paramMap.put("subscription[ccZip]", ccZip);
+			}
+		}
+
+		Document doc = makeServiceCall("/customers/edit/productCode/" + getProductCode() + "/code/" + custCode, paramMap);
+		Element root = doc.getDocumentElement();
+		Element customer = XmlUtils.getFirstChildByTagName(root, "customer");
+		return new CGCustomer(customer);
+	}
+	
+	public CGCustomer updateCustomer(String custCode, String firstName, String lastName, 
+			String email, String company) throws Exception {
+		HashMap<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("firstName", firstName);
+		paramMap.put("lastName", lastName);
+		paramMap.put("email", email);
+		if(company != null){
+			paramMap.put("company", company);
+		}
+		Document doc = makeServiceCall("/customers/edit-customer/productCode/" + getProductCode() + "/code/" + custCode, paramMap);
+		Element root = doc.getDocumentElement();
+		Element customer = XmlUtils.getFirstChildByTagName(root, "customer");
+		return new CGCustomer(customer);
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.rusticisoftware.cheddargetter.client.ICGService#updateSubscription(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
