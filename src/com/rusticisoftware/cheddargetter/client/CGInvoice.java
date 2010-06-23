@@ -13,6 +13,7 @@ public class CGInvoice {
 	protected Date billingDatetime;
 	protected Date createdDatetime;
 	protected List<CGTransaction> transactions;
+	protected List<CGCharge> charges;
 	
 	public String getId() {
 		return id;
@@ -37,6 +38,10 @@ public class CGInvoice {
 	public List<CGTransaction> getTransactions(){
 		return transactions;
 	}
+	
+	public List<CGCharge> getCharges() {
+		return charges;
+	}
 
 	public CGInvoice(Element elem){
 		this.id = elem.getAttribute("id");
@@ -51,6 +56,15 @@ public class CGInvoice {
 			List<Element> transactionsList = XmlUtils.getChildrenByTagName(transactionsParent, "transaction");
 			for(Element transaction : transactionsList){
 				this.transactions.add(new CGTransaction(transaction));
+			}
+		}
+		
+		Element chargesParent = XmlUtils.getFirstChildByTagName(elem, "charges");
+		if(chargesParent != null){
+			this.charges = new ArrayList<CGCharge>();
+			List<Element> chargesList = XmlUtils.getChildrenByTagName(chargesParent, "charge");
+			for(Element charge : chargesList){
+				this.charges.add(new CGCharge(charge));
 			}
 		}
 	}

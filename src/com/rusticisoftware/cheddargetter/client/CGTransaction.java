@@ -16,7 +16,6 @@ public class CGTransaction {
 	protected String response;
 	protected Date transactedDatetime;
 	protected Date createdDatetime;
-	protected List<CGCharge> charges;
 	
 	public String getId() {
 		return id;
@@ -50,10 +49,6 @@ public class CGTransaction {
 		return createdDatetime;
 	}
 
-	public List<CGCharge> getCharges() {
-		return charges;
-	}
-
 	public CGTransaction(Element elem) {
 		this.id = elem.getAttribute("id");
 		this.code = elem.getAttribute("code");
@@ -63,15 +58,6 @@ public class CGTransaction {
 		this.response = XmlUtils.getNamedElemValue(elem, "response");
 		this.transactedDatetime = CGService.parseCgDate(XmlUtils.getNamedElemValue(elem, "transactedDatetime"));
 		this.createdDatetime = CGService.parseCgDate(XmlUtils.getNamedElemValue(elem, "createdDatetime"));
-		
-		Element chargesParent = XmlUtils.getFirstChildByTagName(elem, "charges");
-		if(chargesParent != null){
-			this.charges = new ArrayList<CGCharge>();
-			List<Element> chargesList = XmlUtils.getChildrenByTagName(chargesParent, "charge");
-			for(Element charge : chargesList){
-				this.charges.add(new CGCharge(charge));
-			}
-		}
 	}
 	
 }
