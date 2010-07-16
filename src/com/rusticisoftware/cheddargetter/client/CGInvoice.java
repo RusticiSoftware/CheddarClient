@@ -42,6 +42,17 @@ public class CGInvoice {
 	public List<CGCharge> getCharges() {
 		return charges;
 	}
+	
+	public double getTotalAmount(){
+		if(charges == null){
+			return 0.0d;
+		}
+		double sum = 0.0d;
+		for(CGCharge charge : charges){
+			sum += charge.getEachAmount() * charge.getQuantity();
+		}
+		return sum;
+	}
 
 	public CGInvoice(Element elem){
 		this.id = elem.getAttribute("id");
