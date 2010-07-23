@@ -12,8 +12,8 @@ public class CGInvoice {
 	protected String type;
 	protected Date billingDatetime;
 	protected Date createdDatetime;
-	protected List<CGTransaction> transactions;
-	protected List<CGCharge> charges;
+	protected List<CGTransaction> transactions = new ArrayList<CGTransaction>();
+	protected List<CGCharge> charges = new ArrayList<CGCharge>();
 	
 	public String getId() {
 		return id;
@@ -44,9 +44,6 @@ public class CGInvoice {
 	}
 	
 	public double getTotalAmount(){
-		if(charges == null){
-			return 0.0d;
-		}
 		double sum = 0.0d;
 		for(CGCharge charge : charges){
 			sum += charge.getEachAmount() * charge.getQuantity();
@@ -63,7 +60,6 @@ public class CGInvoice {
 		
 		Element transactionsParent = XmlUtils.getFirstChildByTagName(elem, "transactions");
 		if(transactionsParent != null){
-			this.transactions = new ArrayList<CGTransaction>();
 			List<Element> transactionsList = XmlUtils.getChildrenByTagName(transactionsParent, "transaction");
 			for(Element transaction : transactionsList){
 				this.transactions.add(new CGTransaction(transaction));
@@ -72,7 +68,6 @@ public class CGInvoice {
 		
 		Element chargesParent = XmlUtils.getFirstChildByTagName(elem, "charges");
 		if(chargesParent != null){
-			this.charges = new ArrayList<CGCharge>();
 			List<Element> chargesList = XmlUtils.getChildrenByTagName(chargesParent, "charge");
 			for(Element charge : chargesList){
 				this.charges.add(new CGCharge(charge));

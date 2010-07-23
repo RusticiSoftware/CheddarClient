@@ -18,7 +18,7 @@ public class CGCustomer {
 	protected String gatewayToken;
 	protected Date createdDatetime;
 	protected Date modifiedDatetime;
-	protected List<CGSubscription> subscriptions;
+	protected List<CGSubscription> subscriptions = new ArrayList<CGSubscription>();
 	
 	public String getId() {
 		return id;
@@ -73,7 +73,6 @@ public class CGCustomer {
 		
 		Element subsParent = XmlUtils.getFirstChildByTagName(elem, "subscriptions");
 		if(subsParent != null){
-			this.subscriptions = new ArrayList<CGSubscription>();
 			List<Element> subsList = XmlUtils.getChildrenByTagName(subsParent, "subscription");
 			for(Element sub : subsList){
 				this.subscriptions.add(new CGSubscription(sub));
