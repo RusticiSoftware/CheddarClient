@@ -88,7 +88,16 @@ public class CGService implements ICGService {
 	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getCustomer(java.lang.String)
 	 */
 	public CGCustomer getCustomer(String custCode) throws Exception {
-		Document doc = makeServiceCall("/customers/get/productCode/" + getProductCode() + "/code/" + custCode, null);
+		Document doc = null;
+		try {
+			doc = makeServiceCall("/customers/get/productCode/" + getProductCode() + "/code/" + custCode, null);
+		}
+		catch (CGException cge){
+			//If the exception is just that the customer doesn't exist, return null
+			if(cge.getCode() == 404){
+				return null;
+			}
+		}
 		Element root = doc.getDocumentElement();
 		Element customer = XmlUtils.getFirstChildByTagName(root, "customer");
 		return new CGCustomer(customer);
@@ -331,8 +340,13 @@ public class CGService implements ICGService {
 		try {
 			checkResponseForError(responseDoc);
 		} catch (CGException cge) {
-			log.log(Level.WARNING, "Error calling service at " + path, cge);
-			throw cge;
+			//Let's not log 404s when looking for a customer, since we may
+			//often be looking for a customer just to see if they exist, and this
+			//ends up polluting the logs a lot...
+			if(path.startsWith("/customers") && cge.getCode() != 404){
+				log.log(Level.WARNING, "Error calling service at " + path, cge);
+				throw cge;
+			}
 		}
 		return responseDoc;
 	}
