@@ -22,7 +22,7 @@ public class CGPlan {
 	protected String recurringChargeCode;
 	protected float recurringChargeAmount;
 	protected Date createdDatetime;
-	protected List<CGItem> items;
+	protected List<CGItem> items = new ArrayList<CGItem>();
 
 	public String getCode() {
 		return code;

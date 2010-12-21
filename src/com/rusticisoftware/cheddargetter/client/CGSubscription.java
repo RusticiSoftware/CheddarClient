@@ -21,9 +21,9 @@ public class CGSubscription {
 	protected Date ccExpirationDate;
 	protected Date canceledDatetime;
 	protected Date createdDatetime;
-	protected List<CGPlan> plans;
-	protected List<CGItem> items;
-	protected List<CGInvoice> invoices;
+	protected List<CGPlan> plans = new ArrayList<CGPlan>();
+	protected List<CGItem> items = new ArrayList<CGItem>();
+	protected List<CGInvoice> invoices = new ArrayList<CGInvoice>();
 	
 	public String getId() {
 		return id;
