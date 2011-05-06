@@ -366,7 +366,8 @@ public class CGService implements ICGService {
 			//Let's not log 404s when looking for a customer, since we may
 			//often be looking for a customer just to see if they exist, and this
 			//ends up polluting the logs a lot...
-			if(path.startsWith("/customers") && cge.getCode() != 404){
+			boolean missingCustomer = path.startsWith("/customers") && cge.getCode() == 404;
+			if(!missingCustomer){
 				log.log(Level.WARNING, "Error calling service at " + path, cge);
 				throw cge;
 			}
@@ -440,15 +441,28 @@ public class CGService implements ICGService {
 	protected boolean checkResponseForError(Document doc) throws CGException, Exception {
 		Element root = doc.getDocumentElement();
 		if(root.getNodeName().equals("error")){
-			String code = root.getAttribute("code");
-			String auxCode = root.getAttribute("auxCode");
-			if(auxCode == null || auxCode.length() == 0){
-				auxCode = "0";
+			throw getExceptionFromElement(root);
+		}
+		else if (root.getNodeName().equals("customers")){
+			Element errorsElem = XmlUtils.getFirstChildByTagName(root, "errors");
+			if(errorsElem != null){
+				Element errorElem = XmlUtils.getFirstChildByTagName(errorsElem, "error");
+				if(errorElem != null){
+					throw getExceptionFromElement(errorElem);
+				}
 			}
-			String message = root.getTextContent();
-			throw new CGException(Integer.parseInt(code), Integer.parseInt(auxCode), message);
 		}
 		return true;
+	}
+	
+	protected CGException getExceptionFromElement(Element errorElem){
+		String code = errorElem.getAttribute("code");
+		String auxCode = errorElem.getAttribute("auxCode");
+		if(auxCode == null || auxCode.length() == 0){
+			auxCode = "0";
+		}
+		String message = errorElem.getTextContent();
+		return new CGException(Integer.parseInt(code), Integer.parseInt(auxCode), message);
 	}
 	
 	public static Date parseCgDate(String cgDate) {
