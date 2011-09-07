@@ -145,7 +145,9 @@ public class CGService implements ICGService {
 	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getAllCustomers()
 	 */
 	public Document getAllCustomers() throws Exception {
-		return makeServiceCall("/customers/get/productCode/" + getProductCode(), null);
+		Map<String, String> params = new HashMap<String, String>();
+		params.put("subscriptionStatus", "activeOnly");
+		return makeServiceCall("/customers/get/productCode/" + getProductCode(), params);
 	}
 	
 	/* (non-Javadoc)
@@ -172,7 +174,7 @@ public class CGService implements ICGService {
 		if(ccNumber != null){
 			paramMap.put("subscription[ccFirstName]", ccFirstName);
 			paramMap.put("subscription[ccLastName]", ccLastName);
-			paramMap.put("subscription[ccNumber]", ccNumber);
+			paramMap.put("subscription[ccNumber]", stripCcNumber(ccNumber));
 			paramMap.put("subscription[ccExpiration]", ccExpireMonth + "/" + ccExpireYear);
 			if(ccCardCode != null){
 				paramMap.put("subscription[ccCardCode]", ccCardCode);
@@ -208,7 +210,7 @@ public class CGService implements ICGService {
 		if(ccNumber != null){
 			paramMap.put("subscription[ccFirstName]", ccFirstName);
 			paramMap.put("subscription[ccLastName]", ccLastName);
-			paramMap.put("subscription[ccNumber]", ccNumber);
+			paramMap.put("subscription[ccNumber]", stripCcNumber(ccNumber));
 			paramMap.put("subscription[ccExpiration]", ccExpireMonth + "/" + ccExpireYear);
 			if(ccCardCode != null){
 				paramMap.put("subscription[ccCardCode]", ccCardCode);
@@ -253,7 +255,7 @@ public class CGService implements ICGService {
 		if(ccNumber != null){
 			paramMap.put("ccFirstName", ccFirstName);
 			paramMap.put("ccLastName", ccLastName);
-			paramMap.put("ccNumber", ccNumber);
+			paramMap.put("ccNumber", stripCcNumber(ccNumber));
 			paramMap.put("ccExpiration", ccExpireMonth + "/" + ccExpireYear);
 			if(ccCardCode != null){
 				paramMap.put("ccCardCode", ccCardCode);
@@ -354,7 +356,7 @@ public class CGService implements ICGService {
 	    throw new Exception("Couldn't find item with code " + itemCode);
 	}
 	
-	protected Document makeServiceCall(String path, Map<String,String> paramMap) throws Exception {
+	public Document makeServiceCall(String path, Map<String,String> paramMap) throws Exception {
 		String fullPath = CG_SERVICE_ROOT + path;
 		String encodedParams = encodeParamMap(paramMap);
 		String response = postTo(fullPath, getUserName(), getPassword(), encodedParams);
@@ -488,5 +490,9 @@ public class CGService implements ICGService {
     	String tz = cgDate.substring(tzIndex, cgDate.length());
     	String modifiedTz = tz.replace(":", "");
     	return cgDate.substring(0, tzIndex) + modifiedTz;
+	}
+	
+	private static String stripCcNumber(String ccNumber) {
+		return (ccNumber == null) ? null : ccNumber.replace(" ", "").replace("-", "");
 	}
 }

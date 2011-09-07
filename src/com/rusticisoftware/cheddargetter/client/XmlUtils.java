@@ -34,8 +34,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.StringWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -219,4 +222,29 @@ public class XmlUtils {
         }
         return true;
     }
+
+    public static String xmlSerialize(Date date){
+    	if(date == null){
+    		return null;
+    	}
+    	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'SSSZ");
+    	sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    	return sdf.format((Date)date);
+    }
+    
+    public static Date parseXmlDate(String xmlDateStr) throws Exception {
+    	if(xmlDateStr == null || xmlDateStr.trim().length() < 1){
+			return null;
+		}
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'.'SSSZ");
+    	sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
+    	return sdf.parse(xmlDateStr);
+    }
+    
+    public static String getNamedTextElemXml(String tagName, String value){
+		if(value == null || value.trim().length() < 1){
+			return "<" + tagName + "/>";
+		}
+		return "<" + tagName + "><![CDATA[" + value + "]]></" + tagName + ">";
+	}
 }

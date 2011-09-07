@@ -29,6 +29,7 @@
 package com.rusticisoftware.cheddargetter.client;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -89,5 +90,7 @@ public interface ICGService {
 
 	public abstract int getCurrentItemUsage(String customerCode, String itemCode)
 			throws Exception;
+	
+	public Document makeServiceCall(String path, Map<String,String> paramMap) throws Exception;
 
 }
