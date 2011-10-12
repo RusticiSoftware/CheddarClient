@@ -28,6 +28,7 @@
 
 package com.rusticisoftware.cheddargetter.client;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,7 +37,7 @@ import java.util.List;
 
 import org.w3c.dom.Element;
 
-public class CGCustomer {
+public class CGCustomer implements Serializable {
 	protected String id;
 	protected String code;
 	protected String firstName;

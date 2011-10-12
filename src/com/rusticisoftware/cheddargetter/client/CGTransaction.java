@@ -28,13 +28,14 @@
 
 package com.rusticisoftware.cheddargetter.client;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Element;
 
-public class CGTransaction {
+public class CGTransaction implements Serializable {
 	protected String id;
 	protected String code;
 	protected String parentId;

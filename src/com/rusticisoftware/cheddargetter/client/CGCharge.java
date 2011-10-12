@@ -28,15 +28,16 @@
 
 package com.rusticisoftware.cheddargetter.client;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.w3c.dom.Element;
 
-public class CGCharge {
+public class CGCharge implements Serializable {
 	protected String id;
 	protected String code;
 	protected String type;
-	protected int quantity;
+	protected float quantity;
 	protected float eachAmount;
 	protected String description;
 	protected Date createdDatetime;
@@ -53,7 +54,7 @@ public class CGCharge {
 		return type;
 	}
 
-	public int getQuantity() {
+	public float getQuantity() {
 		return quantity;
 	}
 
@@ -73,7 +74,7 @@ public class CGCharge {
 		this.id = elem.getAttribute("id");
 		this.code = elem.getAttribute("code");
 		this.type = XmlUtils.getNamedElemValue(elem, "type");
-		this.quantity = (Integer)XmlUtils.getNamedElemValue(elem, "quantity", Integer.class, 0);
+		this.quantity = (Float)XmlUtils.getNamedElemValue(elem, "quantity", Float.class, 0);
 		this.eachAmount = (Float)XmlUtils.getNamedElemValue(elem, "eachAmount", Float.class, 0.0f);
 		this.description = XmlUtils.getNamedElemValue(elem, "description");
 		this.createdDatetime = CGService.parseCgDate(XmlUtils.getNamedElemValue(elem, "createdDatetime"));

@@ -28,13 +28,14 @@
 
 package com.rusticisoftware.cheddargetter.client;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.w3c.dom.Element;
 
-public class CGInvoice {
+public class CGInvoice implements Serializable {
 	protected String id;
 	protected String number;
 	protected String type;

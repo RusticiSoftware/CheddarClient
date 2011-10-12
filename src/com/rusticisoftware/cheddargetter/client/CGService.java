@@ -123,7 +123,7 @@ public class CGService implements ICGService {
 		}
 		Element root = doc.getDocumentElement();
 		Element customer = XmlUtils.getFirstChildByTagName(root, "customer");
-		return new CGCustomer(customer);
+		return (customer == null) ? null : new CGCustomer(customer);
 	}
 	
 	/* (non-Javadoc)
