@@ -380,14 +380,14 @@ public class CGService implements ICGService {
 	}
 	
 	protected String postTo(String urlStr, String userName, String password, String data) throws Exception {
-		return "Bad Data - Cheddar Error";
-		/*
+
 		log.fine("Sending this data to this url: " + urlStr + " data = " + data);
 		
 		//Create a new request to send this data...
 		URL url = new URL(urlStr);
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
 		connection.setConnectTimeout(1000);
+		connection.setReadTimeout(1000);
 		InputStream inputStream = null;
 		InputStream errorStream = null;
 		OutputStream outputStream = null;
@@ -446,7 +446,7 @@ public class CGService implements ICGService {
 			if (connection != null){
 				connection.disconnect();
 			}
-		}*/
+		}
 	}
 	
 	protected String encodeParamMap(Map<String, String> paramMap) throws Exception {
