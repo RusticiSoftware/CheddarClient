@@ -32,6 +32,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
@@ -379,7 +380,7 @@ public class CGService implements ICGService {
 	}
 	
 	protected String postTo(String urlStr, String userName, String password, String data) throws Exception {
-
+		
 		log.fine("Sending this data to this url: " + urlStr + " data = " + data);
 		
 		//Create a new request to send this data...
@@ -388,6 +389,7 @@ public class CGService implements ICGService {
 		connection.setConnectTimeout(1000);
 		InputStream inputStream = null;
 		InputStream errorStream = null;
+		OutputStream outputStream = null;
 		
 		try {
 			//Put authentication fields in http header, and make the data the body
@@ -403,7 +405,8 @@ public class CGService implements ICGService {
 			connection.setUseCaches(false);
 			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
 	
-			PrintWriter output = new PrintWriter(new OutputStreamWriter(connection.getOutputStream()));
+			outputStream = connection.getOutputStream();
+			PrintWriter output = new PrintWriter(new OutputStreamWriter(outputStream));
 			output.write(data);
 			output.flush();
 			output.close();
@@ -414,8 +417,8 @@ public class CGService implements ICGService {
 				inputStream = connection.getInputStream();
 				rd = new BufferedReader(new InputStreamReader(inputStream));
 			} catch (IOException ioe) {
-				errorStream = connection.getErrorStream();
 				log.log(Level.WARNING, "IOException occurred in initial connection to CG: " + ioe.getMessage());
+				errorStream = connection.getErrorStream();
 				rd = new BufferedReader(new InputStreamReader(errorStream));
 			}
 			
@@ -435,6 +438,12 @@ public class CGService implements ICGService {
 			}
 			if(errorStream != null){
 				errorStream.close();
+			}
+			if(outputStream != null){
+				outputStream.close();
+			}
+			if (connection != null){
+				connection.disconnect();
 			}
 		}
 	}
