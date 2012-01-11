@@ -385,6 +385,7 @@ public class CGService implements ICGService {
 		//Create a new request to send this data...
 		URL url = new URL(urlStr);
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+		connection.setConnectTimeout(1000);
 		InputStream inputStream = null;
 		InputStream errorStream = null;
 		
