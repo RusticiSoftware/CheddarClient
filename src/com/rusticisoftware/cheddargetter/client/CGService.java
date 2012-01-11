@@ -30,6 +30,7 @@ package com.rusticisoftware.cheddargetter.client;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -384,42 +385,57 @@ public class CGService implements ICGService {
 		//Create a new request to send this data...
 		URL url = new URL(urlStr);
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
+		InputStream inputStream = null;
+		InputStream errorStream = null;
 		
-		//Put authentication fields in http header, and make the data the body
-		BASE64Encoder enc = new BASE64Encoder();
-		//connection.setRequestProperty("Content-Type", "text/xml");
-		String auth = userName + ":" + password;
-		connection.setRequestProperty("Authorization", "Basic " + enc.encode(auth.getBytes()));
-		
-		
-		connection.setRequestMethod("POST");
-		connection.setDoOutput(true);
-		connection.setDoInput(true);
-		connection.setUseCaches(false);
-		connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-		PrintWriter output = new PrintWriter(new OutputStreamWriter(connection.getOutputStream()));
-		output.write(data);
-		output.flush();
-		output.close();
-
-		//Get response
-		BufferedReader rd;
 		try {
-			rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		} catch (IOException ioe) {
-			rd = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+			//Put authentication fields in http header, and make the data the body
+			BASE64Encoder enc = new BASE64Encoder();
+			//connection.setRequestProperty("Content-Type", "text/xml");
+			String auth = userName + ":" + password;
+			connection.setRequestProperty("Authorization", "Basic " + enc.encode(auth.getBytes()));
+			
+			
+			connection.setRequestMethod("POST");
+			connection.setDoOutput(true);
+			connection.setDoInput(true);
+			connection.setUseCaches(false);
+			connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+	
+			PrintWriter output = new PrintWriter(new OutputStreamWriter(connection.getOutputStream()));
+			output.write(data);
+			output.flush();
+			output.close();
+	
+			//Get response
+			BufferedReader rd;
+			try {
+				inputStream = connection.getInputStream();
+				rd = new BufferedReader(new InputStreamReader(inputStream));
+			} catch (IOException ioe) {
+				errorStream = connection.getErrorStream();
+				log.log(Level.WARNING, "IOException occurred in initial connection to CG: " + ioe.getMessage());
+				rd = new BufferedReader(new InputStreamReader(errorStream));
+			}
+			
+			StringBuilder response = new StringBuilder();
+			String responseLine = null;
+			while((responseLine = rd.readLine()) != null){
+				response.append(responseLine);
+			}
+			
+			log.fine("Got this back from CG: " + response.toString());
+			
+			return response.toString();
 		}
-		
-		StringBuilder response = new StringBuilder();
-		String responseLine = null;
-		while((responseLine = rd.readLine()) != null){
-			response.append(responseLine);
+		finally {
+			if(inputStream != null){
+				inputStream.close();
+			}
+			if(errorStream != null){
+				errorStream.close();
+			}
 		}
-		
-		log.fine("Got this back from CG: " + response.toString());
-		
-		return response.toString();
 	}
 	
 	protected String encodeParamMap(Map<String, String> paramMap) throws Exception {
