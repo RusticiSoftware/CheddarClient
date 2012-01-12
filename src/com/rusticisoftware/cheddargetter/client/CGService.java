@@ -55,6 +55,12 @@ import org.w3c.dom.Element;
 import sun.misc.BASE64Encoder;
 
 public class CGService implements ICGService {
+	private static final int DEFAULT_TIMEOUT = 1000 * 5; //5 seconds
+	private static final int GET_CUSTOMER_TIMEOUT = 5000; //5 seconds
+	private static final int ADD_ITEM_QUANTITY_TIMEOUT = 500; //0.5 seconds 
+	private static final int GET_ITEM_QUANTITY_TIMEOUT = 1000; //1 second
+	
+	
 	private static Logger log = Logger.getLogger(CGService.class.toString());
 	
 	private static String CG_SERVICE_ROOT = "https://cheddargetter.com/xml";
@@ -113,9 +119,13 @@ public class CGService implements ICGService {
 	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getCustomer(java.lang.String)
 	 */
 	public CGCustomer getCustomer(String custCode) throws Exception {
+		return getCustomer(custCode, GET_CUSTOMER_TIMEOUT);
+	}
+	
+	public CGCustomer getCustomer(String custCode, int timeOutMilliSeconds) throws Exception {
 		Document doc = null;
 		try {
-			doc = makeServiceCall("/customers/get/productCode/" + getProductCode() + "/code/" + custCode, null);
+			doc = makeServiceCall("/customers/get/productCode/" + getProductCode() + "/code/" + custCode, null, timeOutMilliSeconds);
 		}
 		catch (CGException cge){
 			//If the exception is just that the customer doesn't exist, return null
@@ -127,6 +137,8 @@ public class CGService implements ICGService {
 		Element customer = XmlUtils.getFirstChildByTagName(root, "customer");
 		return (customer == null) ? null : new CGCustomer(customer);
 	}
+	
+	
 	
 	/* (non-Javadoc)
 	 * @see com.rusticisoftware.cheddargetter.client.ICGService#customerExists(java.lang.String)
@@ -294,7 +306,8 @@ public class CGService implements ICGService {
 	    
 	    String relativeUrl = "/customers/add-item-quantity/productCode/" + getProductCode() + 
 	                         "/code/" + customerCode + "/itemCode/" + itemCode;
-	    return makeServiceCall(relativeUrl, paramMap);
+	    
+	    return makeServiceCall(relativeUrl, paramMap, ADD_ITEM_QUANTITY_TIMEOUT);
 	    
 	}
 	
@@ -348,7 +361,7 @@ public class CGService implements ICGService {
 	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getCurrentItemUsage(java.lang.String, java.lang.String)
 	 */
 	public int getCurrentItemUsage(String customerCode, String itemCode) throws Exception{
-	    CGCustomer cgCust = getCustomer(customerCode);
+	    CGCustomer cgCust = getCustomer(customerCode, GET_ITEM_QUANTITY_TIMEOUT);
 	    List<CGItem> currentItems = cgCust.getSubscriptions().get(0).getItems();
 	    for(CGItem item : currentItems){
 	        if(item.getCode().equals(itemCode)){
@@ -359,9 +372,13 @@ public class CGService implements ICGService {
 	}
 	
 	public Document makeServiceCall(String path, Map<String,String> paramMap) throws Exception {
+		return makeServiceCall(path, paramMap, DEFAULT_TIMEOUT);
+	}
+	
+	public Document makeServiceCall(String path, Map<String,String> paramMap, int timeOutMilliSeconds) throws Exception {
 		String fullPath = CG_SERVICE_ROOT + path;
 		String encodedParams = encodeParamMap(paramMap);
-		String response = postTo(fullPath, getUserName(), getPassword(), encodedParams);
+		String response = postTo(fullPath, getUserName(), getPassword(), encodedParams, timeOutMilliSeconds);
 		Document responseDoc = XmlUtils.parseXmlString(response);
 		log.log(Level.FINE, "Response from CG: " + XmlUtils.getXmlString(responseDoc));
 		try {
@@ -379,15 +396,15 @@ public class CGService implements ICGService {
 		return responseDoc;
 	}
 	
-	protected String postTo(String urlStr, String userName, String password, String data) throws Exception {
+	protected String postTo(String urlStr, String userName, String password, String data, int timeOutMilliSeconds) throws Exception {
 
 		log.fine("Sending this data to this url: " + urlStr + " data = " + data);
 		
 		//Create a new request to send this data...
 		URL url = new URL(urlStr);
 		HttpURLConnection connection = (HttpURLConnection)url.openConnection();
-		connection.setConnectTimeout(5000);
-		connection.setReadTimeout(5000);
+		connection.setConnectTimeout(timeOutMilliSeconds);
+		connection.setReadTimeout(timeOutMilliSeconds);
 		InputStream inputStream = null;
 		InputStream errorStream = null;
 		OutputStream outputStream = null;
