@@ -55,10 +55,10 @@ import org.w3c.dom.Element;
 import sun.misc.BASE64Encoder;
 
 public class CGService implements ICGService {
-	private static final int DEFAULT_TIMEOUT = 5000; //5 seconds
+	private static final int DEFAULT_TIMEOUT = 10000; //10 seconds
 	private static final int GET_CUSTOMER_TIMEOUT = 10000; //10 seconds
 	private static final int GET_ITEM_QUANTITY_TIMEOUT = 5000; //5 seconds (relies on getting a customer, but not as mission critical, so higher but not high)
-	private static final int ADD_ITEM_QUANTITY_TIMEOUT = 1000; //1 second 
+	private static final int ADD_ITEM_QUANTITY_TIMEOUT = 2000; //2 seconds 
 	
 	
 	private static Logger log = Logger.getLogger(CGService.class.toString());
