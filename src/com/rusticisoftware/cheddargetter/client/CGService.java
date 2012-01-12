@@ -435,9 +435,9 @@ public class CGService implements ICGService {
 				inputStream = connection.getInputStream();
 				rd = new BufferedReader(new InputStreamReader(inputStream));
 			} catch (IOException ioe) {
-				log.log(Level.WARNING, "IOException occurred in initial connection to CG: " + ioe.getMessage(), ioe);
 				errorStream = connection.getErrorStream();
 				if(errorStream == null){
+					log.log(Level.WARNING, "Irrecoverable IOException occurred in connection to CG: " + ioe.getMessage(), ioe);
 					throw ioe;
 				}
 				rd = new BufferedReader(new InputStreamReader(errorStream));
