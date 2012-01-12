@@ -55,9 +55,9 @@ import org.w3c.dom.Element;
 import sun.misc.BASE64Encoder;
 
 public class CGService implements ICGService {
-	private static final int DEFAULT_TIMEOUT = 1000 * 5; //5 seconds
+	private static final int DEFAULT_TIMEOUT = 5000; //5 seconds
 	private static final int GET_CUSTOMER_TIMEOUT = 5000; //5 seconds
-	private static final int ADD_ITEM_QUANTITY_TIMEOUT = 500; //0.5 seconds 
+	private static final int ADD_ITEM_QUANTITY_TIMEOUT = 1000; //1 second 
 	private static final int GET_ITEM_QUANTITY_TIMEOUT = 1000; //1 second
 	
 	
@@ -435,8 +435,11 @@ public class CGService implements ICGService {
 				inputStream = connection.getInputStream();
 				rd = new BufferedReader(new InputStreamReader(inputStream));
 			} catch (IOException ioe) {
-				log.log(Level.WARNING, "IOException occurred in initial connection to CG: " + ioe.getMessage());
+				log.log(Level.WARNING, "IOException occurred in initial connection to CG: " + ioe.getMessage(), ioe);
 				errorStream = connection.getErrorStream();
+				if(errorStream == null){
+					throw ioe;
+				}
 				rd = new BufferedReader(new InputStreamReader(errorStream));
 			}
 			
