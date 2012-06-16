@@ -61,7 +61,7 @@ public class CGService implements ICGService {
 	private static final int ADD_ITEM_QUANTITY_TIMEOUT = 5000; //5 seconds 
 	
 	
-	private static Logger log = Logger.getLogger(CGService.class.toString());
+	private static Logger log = Logger.getLogger(CGService.class.getName());
 	
 	private static String CG_SERVICE_ROOT = "https://cheddargetter.com/xml";
 	
