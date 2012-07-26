@@ -39,7 +39,7 @@ public class CGException extends Exception {
 	public static final int BAD_GATEWAY = 512;
 	
 	private int code = UNKNOWN;
-	private int auxCode = 0;
+	private String auxCode = "none";
 	
 	public int getCode(){
 		return code;
@@ -48,14 +48,14 @@ public class CGException extends Exception {
 		this.code = code;
 	}
 	
-	public int getAuxCode(){
+	public String getAuxCode(){
 		return auxCode;
 	}
-	public void setAuxCode(int auxCode){
+	public void setAuxCode(String auxCode){
 		this.auxCode = auxCode;
 	}
 	
-	public CGException (int code, int auxCode, String message){
+	public CGException (int code, String auxCode, String message){
 		super(message);
 		this.setCode(code);
 		this.setAuxCode(auxCode);
@@ -63,11 +63,16 @@ public class CGException extends Exception {
 	
 	public String toString(){
 		return "CGException: Code = " + getCode() +
-				(auxCode == 0 ? "" : ", AuxCode = " + auxCode) +
+				("none".equals(auxCode) ? "" : ", AuxCode = " + auxCode) +
 				", Message = " + this.getMessage();
 	}
 	
 	public boolean isGatewayError(){
-		return (auxCode != 0 && (auxCode < 5000 || auxCode >= 7000));
+		boolean ret = false;
+		try {
+			ret = (auxCode != "none" && (Integer.parseInt(auxCode) < 5000 || Integer.parseInt(auxCode) >= 7000));
+		} catch (Exception e) {};
+		return ret;
 	}
+		
 }

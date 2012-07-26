@@ -508,10 +508,10 @@ public class CGService implements ICGService {
 		String code = errorElem.getAttribute("code");
 		String auxCode = errorElem.getAttribute("auxCode");
 		if(auxCode == null || auxCode.length() == 0){
-			auxCode = "0";
+			auxCode = "none";
 		}
 		String message = errorElem.getTextContent();
-		return new CGException(Integer.parseInt(code), Integer.parseInt(auxCode), message);
+		return new CGException(Integer.parseInt(code), auxCode, message);
 	}
 	
 	public static Date parseCgDate(String cgDate) {
