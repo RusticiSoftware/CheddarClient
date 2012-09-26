@@ -91,6 +91,8 @@ public interface ICGService {
 	public abstract int getCurrentItemUsage(String customerCode, String itemCode)
 			throws Exception;
 	
+	public abstract Document presentFinalBill(String customerCode) throws Exception;
+	
 	public Document makeServiceCall(String path, Map<String,String> paramMap) throws Exception;
 
 }

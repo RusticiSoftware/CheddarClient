@@ -371,6 +371,13 @@ public class CGService implements ICGService {
 	    throw new Exception("Couldn't find item with code " + itemCode);
 	}
 	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#presentFinalBill(java.lang.String)
+	 */
+	public Document presentFinalBill(String customerCode) throws Exception {
+		return makeServiceCall("/invoices/new/productCode/" + getProductCode() + "/code/" + customerCode, null);
+	}
+	
 	public Document makeServiceCall(String path, Map<String,String> paramMap) throws Exception {
 		return makeServiceCall(path, paramMap, DEFAULT_TIMEOUT);
 	}
@@ -542,4 +549,5 @@ public class CGService implements ICGService {
 	private static String stripCcNumber(String ccNumber) {
 		return (ccNumber == null) ? null : ccNumber.replace(" ", "").replace("-", "");
 	}
+	
 }
