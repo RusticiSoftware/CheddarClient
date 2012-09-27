@@ -375,7 +375,10 @@ public class CGService implements ICGService {
 	 * @see com.rusticisoftware.cheddargetter.client.ICGService#presentFinalBill(java.lang.String)
 	 */
 	public Document presentFinalBill(String customerCode) throws Exception {
-		return makeServiceCall("/invoices/new/productCode/" + getProductCode() + "/code/" + customerCode, null);
+		HashMap<String, String> paramMap = new HashMap<String, String>();
+		paramMap.put("subscription[changeBillDate]", "now");
+		return makeServiceCall("/customers/edit/productCode/" + getProductCode() + "/code/" + customerCode, paramMap);
+		
 	}
 	
 	public Document makeServiceCall(String path, Map<String,String> paramMap) throws Exception {
