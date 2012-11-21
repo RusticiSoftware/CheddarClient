@@ -81,6 +81,9 @@ public interface ICGService {
 
 	public abstract Document addItemQuantity(String customerCode,
 			String itemCode, int quantity) throws Exception;
+	
+	public abstract Document removeItemQuantity(String customerCode,
+			String itemCode, int quantity) throws Exception;
 
 	public abstract CreditCardData getLatestCreditCardData(String customerCode)
 			throws Exception;
