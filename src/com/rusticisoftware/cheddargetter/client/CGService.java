@@ -312,6 +312,36 @@ public class CGService implements ICGService {
 	}
 	
 	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#addCustomCharge(java.lang.String, java.lang.String, int, java.lang.String)
+	 */
+	public Document addCustomCharge(String customerCode, String itemCode, int quantity, String eachAmount) throws Exception {
+	    HashMap<String, String> paramMap = new HashMap<String, String>();
+	    paramMap.put("chargeCode", itemCode);
+	    paramMap.put("quantity", String.valueOf(quantity));
+	    paramMap.put("eachAmount", eachAmount);
+	    
+	    String relativeUrl = "/customers/add-charge/productCode/" + getProductCode() + 
+	                         "/code/" + customerCode;
+	    
+	    return makeServiceCall(relativeUrl, paramMap, ADD_ITEM_QUANTITY_TIMEOUT);
+	    
+	}
+	
+	/* (non-Javadoc)
+	 * @see com.rusticisoftware.cheddargetter.client.ICGService#removeItemQuantity(java.lang.String, java.lang.String, int)
+	 */
+	public Document removeItemQuantity(String customerCode, String itemCode, int quantity) throws Exception {
+	    HashMap<String, String> paramMap = new HashMap<String, String>();
+	    paramMap.put("quantity", String.valueOf(quantity));
+	    
+	    String relativeUrl = "/customers/remove-item-quantity/productCode/" + getProductCode() + 
+	                         "/code/" + customerCode + "/itemCode/" + itemCode;
+	    
+	    return makeServiceCall(relativeUrl, paramMap, ADD_ITEM_QUANTITY_TIMEOUT);
+	    
+	}
+	
+	/* (non-Javadoc)
 	 * @see com.rusticisoftware.cheddargetter.client.ICGService#getLatestCreditCardData(java.lang.String)
 	 */
 	public CreditCardData getLatestCreditCardData(String customerCode) throws Exception {
