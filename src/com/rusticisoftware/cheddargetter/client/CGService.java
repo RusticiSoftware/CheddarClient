@@ -55,10 +55,15 @@ import org.w3c.dom.Element;
 import sun.misc.BASE64Encoder;
 
 public class CGService implements ICGService {
-	private static final int DEFAULT_TIMEOUT = 15000; //15 seconds
-	private static final int GET_CUSTOMER_TIMEOUT = 15000; //15 seconds
-	private static final int GET_ITEM_QUANTITY_TIMEOUT = 10000; //10 seconds (relies on getting a customer, but not as mission critical, so higher but not high)
-	private static final int ADD_ITEM_QUANTITY_TIMEOUT = 5000; //5 seconds 
+	// Timeouts are fairly long since they used to be set even higher, reducing cautiously.
+	// Consider reducing these even further since we've seen that too much waiting causes high memory utilization, high CPU for GC,
+	// and eventually TC is completely unresponsive.
+	private static final int DEFAULT_TIMEOUT = 5*1000;
+	private static final int GET_CUSTOMER_TIMEOUT = DEFAULT_TIMEOUT;
+	private static final int GET_ITEM_QUANTITY_TIMEOUT = DEFAULT_TIMEOUT;
+	// hit every time we create a registration, possibly could be lower.
+	// will reduce this value further once we have statistics on typical response times
+	private static final int ADD_ITEM_QUANTITY_TIMEOUT = 1*1000;
 	
 	
 	private static Logger log = Logger.getLogger(CGService.class.getName());
@@ -448,6 +453,7 @@ public class CGService implements ICGService {
 		InputStream inputStream = null;
 		InputStream errorStream = null;
 		OutputStream outputStream = null;
+		long startMs = System.currentTimeMillis();
 		
 		try {
 			//Put authentication fields in http header, and make the data the body
@@ -489,6 +495,7 @@ public class CGService implements ICGService {
 				response.append(responseLine);
 			}
 			
+			log.info(String.format("CGService.makeServiceCall: took %1$d ms to: %2$s", System.currentTimeMillis()-startMs, urlStr));
 			log.fine("Got this back from CG: " + response.toString());
 			
 			return response.toString();
