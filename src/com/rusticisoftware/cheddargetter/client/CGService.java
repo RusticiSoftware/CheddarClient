@@ -61,6 +61,7 @@ public class CGService implements ICGService {
 	private static final int DEFAULT_TIMEOUT = 5*1000;
 	private static final int GET_CUSTOMER_TIMEOUT = DEFAULT_TIMEOUT;
 	private static final int GET_ITEM_QUANTITY_TIMEOUT = DEFAULT_TIMEOUT;
+	private static final int CC_PROCESSING_TIMEOUT = 20*1000; // CC processing may legitimately take a while
 	// hit every time we create a registration, possibly could be lower.
 	// will reduce this value further once we have statistics on typical response times
 	private static final int ADD_ITEM_QUANTITY_TIMEOUT = 1*1000;
@@ -203,7 +204,7 @@ public class CGService implements ICGService {
 			}
 		}
 
-		Document doc = makeServiceCall("/customers/new/productCode/" + getProductCode(), paramMap);
+		Document doc = makeServiceCall("/customers/new/productCode/" + getProductCode(), paramMap, CC_PROCESSING_TIMEOUT);
 		Element root = doc.getDocumentElement();
 		Element customer = XmlUtils.getFirstChildByTagName(root, "customer");
 		return new CGCustomer(customer);
@@ -239,7 +240,7 @@ public class CGService implements ICGService {
 			}
 		}
 
-		Document doc = makeServiceCall("/customers/edit/productCode/" + getProductCode() + "/code/" + custCode, paramMap);
+		Document doc = makeServiceCall("/customers/edit/productCode/" + getProductCode() + "/code/" + custCode, paramMap, CC_PROCESSING_TIMEOUT);
 		Element root = doc.getDocumentElement();
 		Element customer = XmlUtils.getFirstChildByTagName(root, "customer");
 		return new CGCustomer(customer);
@@ -285,7 +286,7 @@ public class CGService implements ICGService {
 		}
 		
 		String relativeUrl = "/customers/edit-subscription/productCode/" + getProductCode() + "/code/" + customerCode;
-		return makeServiceCall(relativeUrl, paramMap);
+		return makeServiceCall(relativeUrl, paramMap, CC_PROCESSING_TIMEOUT);
 	}
 	
 	/* (non-Javadoc)
