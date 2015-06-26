@@ -28,11 +28,9 @@
 
 package com.rusticisoftware.cheddargetter.client;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+
+import java.util.Map;
 
 public interface ICGService {
 
@@ -59,12 +57,24 @@ public interface ICGService {
 			String subscriptionPlanCode, String ccFirstName, String ccLastName,
 			String ccNumber, String ccExpireMonth, String ccExpireYear,
 			String ccCardCode, String ccZip) throws Exception;
-	
+
+    public CGCustomer createNewCustomer(String custCode, String firstName, String lastName,
+                                        String email, String company, String subscriptionPlanCode, String ccFirstName,
+                                        String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear,
+                                        String ccCardCode, String ccZip, String ccAddress, String ccCity,
+                                        String ccState, String ccCountry) throws Exception;
+
 	public CGCustomer updateCustomerAndSubscription(String custCode, String firstName, String lastName, 
 			String email, String company, String subscriptionPlanCode, String ccFirstName,
 			String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear, 
 			String ccCardCode, String ccZip) throws Exception;
-	
+
+    public CGCustomer updateCustomerAndSubscription(String custCode, String firstName, String lastName,
+                                                    String email, String company, String subscriptionPlanCode, String ccFirstName,
+                                                    String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear,
+                                                    String ccCardCode, String ccZip, String ccAddress, String ccCity,
+                                                    String ccState, String ccCountry) throws Exception;
+
 	public CGCustomer updateCustomer(String custCode, String firstName, String lastName, 
 			String email, String company) throws Exception;
 

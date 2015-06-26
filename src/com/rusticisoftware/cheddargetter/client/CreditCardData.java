@@ -33,6 +33,11 @@ public class CreditCardData {
 	private String lastName;
 	private String type;
 	private String lastFour;
+    protected String address;
+    protected String city;
+    protected String state;
+    protected String country;
+    protected String zip;
 	private int expireMonth;
 	private int expireYear;
 	
@@ -64,6 +69,26 @@ public class CreditCardData {
 		return lastFour;
 	}
 
+    public String getAddress() {
+        return address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public String getState() {
+        return state;
+    }
+
+    public String getCountry() {
+        return country;
+    }
+
+    public String getZip() {
+        return zip;
+    }
+
 	public void setLastFour(String lastFour) {
 		this.lastFour = lastFour;
 	}
@@ -87,7 +112,22 @@ public class CreditCardData {
 	public CreditCardData() {
 		
 	}
-	
+
+    public CreditCardData(String firstName, String lastName, String type, String lastFour, int expireMonth, int expireYear,
+                          String address, String city, String state, String country, String zip) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.type = type;
+        this.lastFour = lastFour;
+        this.expireMonth = expireMonth;
+        this.expireYear = expireYear;
+        this.address = address;
+        this.city = city;
+        this.state = state;
+        this.country = country;
+        this.zip = zip;
+    }
+
 	public CreditCardData(String firstName, String lastName, String type, String lastFour, int expireMonth, int expireYear){
 		this.firstName = firstName;
 		this.lastName = lastName;

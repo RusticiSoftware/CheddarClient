@@ -28,31 +28,18 @@
 
 package com.rusticisoftware.cheddargetter.client;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import sun.misc.BASE64Encoder;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
-import sun.misc.BASE64Encoder;
 
 public class CGService implements ICGService {
 	// Timeouts are fairly long since they used to be set even higher, reducing cautiously.
@@ -177,7 +164,16 @@ public class CGService implements ICGService {
 			String email, String company, String subscriptionPlanCode, String ccFirstName,
 			String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear, 
 			String ccCardCode, String ccZip) throws Exception {
-		
+        return createNewCustomer(custCode, firstName, lastName, email, company, subscriptionPlanCode,
+                                    ccFirstName, ccLastName, ccNumber, ccExpireMonth, ccExpireYear, ccCardCode,
+                                    ccZip, null, null, null, null);
+    }
+    public CGCustomer createNewCustomer(String custCode, String firstName, String lastName,
+                                        String email, String company, String subscriptionPlanCode, String ccFirstName,
+                                        String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear,
+                                        String ccCardCode, String ccZip, String ccAddress, String ccCity,
+                                        String ccState, String ccCountry) throws Exception {
+
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("code", custCode);
 		paramMap.put("firstName", firstName);
@@ -192,16 +188,9 @@ public class CGService implements ICGService {
 		//If plan is free, no cc information needed, so we just check
 		//ccNumber field and assume the rest are there or not
 		if(ccNumber != null){
-			paramMap.put("subscription[ccFirstName]", ccFirstName);
-			paramMap.put("subscription[ccLastName]", ccLastName);
-			paramMap.put("subscription[ccNumber]", stripCcNumber(ccNumber));
-			paramMap.put("subscription[ccExpiration]", ccExpireMonth + "/" + ccExpireYear);
-			if(ccCardCode != null){
-				paramMap.put("subscription[ccCardCode]", ccCardCode);
-			}
-			if(ccZip != null){
-				paramMap.put("subscription[ccZip]", ccZip);
-			}
+            BuildCreditCardParams(paramMap, ccFirstName, ccLastName, ccNumber,
+                                     ccExpireMonth, ccExpireYear, ccCardCode, ccZip,
+                                     ccAddress, ccCity, ccState, ccCountry);
 		}
 
 		Document doc = makeServiceCall("/customers/new/productCode/" + getProductCode(), paramMap, CC_PROCESSING_TIMEOUT);
@@ -214,7 +203,17 @@ public class CGService implements ICGService {
 			String email, String company, String subscriptionPlanCode, String ccFirstName,
 			String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear, 
 			String ccCardCode, String ccZip) throws Exception {
-		
+        return updateCustomerAndSubscription(custCode, firstName, lastName, email, company, subscriptionPlanCode,
+                                                ccFirstName, ccLastName, ccNumber, ccExpireMonth, ccExpireYear, ccCardCode,
+                                                ccZip, null, null, null, null);
+    }
+
+    public CGCustomer updateCustomerAndSubscription(String custCode, String firstName, String lastName,
+                                                    String email, String company, String subscriptionPlanCode, String ccFirstName,
+                                                    String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear,
+                                                    String ccCardCode, String ccZip, String ccAddress, String ccCity,
+                                                    String ccState, String ccCountry) throws Exception {
+
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("firstName", firstName);
 		paramMap.put("lastName", lastName);
@@ -222,22 +221,15 @@ public class CGService implements ICGService {
 		if(company != null){
 			paramMap.put("company", company);
 		}
-		
+
 		paramMap.put("subscription[planCode]", subscriptionPlanCode);
 		
 		//If plan is free, no cc information needed, so we just check
 		//ccNumber field and assume the rest are there or not
 		if(ccNumber != null){
-			paramMap.put("subscription[ccFirstName]", ccFirstName);
-			paramMap.put("subscription[ccLastName]", ccLastName);
-			paramMap.put("subscription[ccNumber]", stripCcNumber(ccNumber));
-			paramMap.put("subscription[ccExpiration]", ccExpireMonth + "/" + ccExpireYear);
-			if(ccCardCode != null){
-				paramMap.put("subscription[ccCardCode]", ccCardCode);
-			}
-			if(ccZip != null){
-				paramMap.put("subscription[ccZip]", ccZip);
-			}
+            BuildCreditCardParams(paramMap, ccFirstName, ccLastName, ccNumber,
+                                     ccExpireMonth, ccExpireYear, ccCardCode, ccZip,
+                                     ccAddress, ccCity, ccState, ccCountry);
 		}
 
 		Document doc = makeServiceCall("/customers/edit/productCode/" + getProductCode() + "/code/" + custCode, paramMap, CC_PROCESSING_TIMEOUT);
@@ -245,8 +237,41 @@ public class CGService implements ICGService {
 		Element customer = XmlUtils.getFirstChildByTagName(root, "customer");
 		return new CGCustomer(customer);
 	}
-	
-	public CGCustomer updateCustomer(String custCode, String firstName, String lastName, 
+
+    private void BuildCreditCardParams(HashMap<String, String> paramMap, String ccFirstName, String ccLastName,
+                                       String ccNumber, String ccExpireMonth, String ccExpireYear, String ccCardCode,
+                                       String ccZip, String ccAddress, String ccCity, String ccState, String ccCountry) {
+        paramMap.put("subscription[ccFirstName]", ccFirstName);
+        paramMap.put("subscription[ccLastName]", ccLastName);
+        paramMap.put("subscription[ccNumber]", stripCcNumber(ccNumber));
+        paramMap.put("subscription[ccExpiration]", ccExpireMonth + "/" + ccExpireYear);
+
+        if(ccCardCode != null){
+            paramMap.put("subscription[ccCardCode]", ccCardCode);
+        }
+
+        if(ccAddress != null) {
+            paramMap.put("subscription[ccAddress]", ccAddress);
+        }
+
+        if(ccCity != null) {
+            paramMap.put("subscription[ccCity]", ccCity);
+        }
+
+        if(ccState != null) {
+            paramMap.put("subscription[ccState]", ccState);
+        }
+
+        if(ccCountry != null) {
+            paramMap.put("subscription[ccCountry]", ccCountry);
+        }
+
+        if(ccZip != null){
+            paramMap.put("subscription[ccZip]", ccZip);
+        }
+    }
+
+	public CGCustomer updateCustomer(String custCode, String firstName, String lastName,
 			String email, String company) throws Exception {
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("firstName", firstName);
@@ -369,7 +394,9 @@ public class CGService implements ICGService {
 		cal.setTime(sub.getCcExpirationDate());
 		return new CreditCardData(sub.getCcFirstName(), sub.getCcLastName(), 
 				sub.getCcType(), sub.getCcLastFour(), 
-				cal.get(Calendar.MONTH), cal.get(Calendar.YEAR));
+				cal.get(Calendar.MONTH), cal.get(Calendar.YEAR),
+                sub.getCCAddress(), sub.getCCCity(), sub.getCCState(),
+                sub.getCCCountry(), sub.getCCZip());
 	}
 	
 	/* (non-Javadoc)
