@@ -28,15 +28,9 @@
 
 package com.rusticisoftware.cheddargetter.client;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.w3c.dom.Element;
+
+import java.util.*;
 
 public class CGSubscription {
 	
@@ -46,6 +40,11 @@ public class CGSubscription {
 	protected String ccLastName;
 	protected String ccType;
 	protected String ccLastFour;
+    protected String ccAddress;
+    protected String ccCity;
+    protected String ccState;
+    protected String ccCountry;
+    protected String ccZip;
 	protected Date ccExpirationDate;
 	protected Date canceledDatetime;
 	protected Date createdDatetime;
@@ -76,6 +75,26 @@ public class CGSubscription {
 	public String getCcLastFour() {
 		return ccLastFour;
 	}
+
+    public String getCCAddress() {
+        return ccAddress;
+    }
+
+    public String getCCCity() {
+        return ccCity;
+    }
+
+    public String getCCState() {
+        return ccState;
+    }
+
+    public String getCCCountry() {
+        return ccCountry;
+    }
+
+    public String getCCZip() {
+        return ccZip;
+    }
 
 	public Date getCcExpirationDate() {
 		return ccExpirationDate;
@@ -108,6 +127,11 @@ public class CGSubscription {
 		this.ccLastName = XmlUtils.getNamedElemValue(elem, "ccLastName");
 		this.ccType = XmlUtils.getNamedElemValue(elem, "ccType");
 		this.ccLastFour = XmlUtils.getNamedElemValue(elem, "ccLastFour");
+        this.ccAddress = XmlUtils.getNamedElemValue(elem, "ccAddress");
+        this.ccCity = XmlUtils.getNamedElemValue(elem, "ccCity");
+        this.ccState = XmlUtils.getNamedElemValue(elem, "ccState");
+        this.ccCountry = XmlUtils.getNamedElemValue(elem, "ccCountry");
+        this.ccZip = XmlUtils.getNamedElemValue(elem, "ccZip");
 
 		this.ccExpirationDate = CGService.parseCgDate(XmlUtils.getNamedElemValue(elem, "ccExpirationDate"));
 		this.canceledDatetime = CGService.parseCgDate(XmlUtils.getNamedElemValue(elem, "canceledDatetime"));
