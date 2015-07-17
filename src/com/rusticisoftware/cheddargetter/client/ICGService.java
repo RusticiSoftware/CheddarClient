@@ -62,7 +62,7 @@ public interface ICGService {
                                         String email, String company, String subscriptionPlanCode, String ccFirstName,
                                         String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear,
                                         String ccCardCode, String ccZip, String ccAddress, String ccCity,
-                                        String ccState, String ccCountry) throws Exception;
+                                        String ccState, String ccCountry, boolean taxExempt) throws Exception;
 
 	public CGCustomer updateCustomerAndSubscription(String custCode, String firstName, String lastName, 
 			String email, String company, String subscriptionPlanCode, String ccFirstName,
@@ -73,7 +73,7 @@ public interface ICGService {
                                                     String email, String company, String subscriptionPlanCode, String ccFirstName,
                                                     String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear,
                                                     String ccCardCode, String ccZip, String ccAddress, String ccCity,
-                                                    String ccState, String ccCountry) throws Exception;
+                                                    String ccState, String ccCountry, boolean taxExempt) throws Exception;
 
 	public CGCustomer updateCustomer(String custCode, String firstName, String lastName, 
 			String email, String company) throws Exception;

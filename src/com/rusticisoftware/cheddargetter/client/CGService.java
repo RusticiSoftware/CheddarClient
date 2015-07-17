@@ -166,13 +166,13 @@ public class CGService implements ICGService {
 			String ccCardCode, String ccZip) throws Exception {
         return createNewCustomer(custCode, firstName, lastName, email, company, subscriptionPlanCode,
                                     ccFirstName, ccLastName, ccNumber, ccExpireMonth, ccExpireYear, ccCardCode,
-                                    ccZip, null, null, null, null);
+                                    ccZip, null, null, null, null, false);
     }
     public CGCustomer createNewCustomer(String custCode, String firstName, String lastName,
                                         String email, String company, String subscriptionPlanCode, String ccFirstName,
                                         String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear,
                                         String ccCardCode, String ccZip, String ccAddress, String ccCity,
-                                        String ccState, String ccCountry) throws Exception {
+                                        String ccState, String ccCountry, boolean taxExempt) throws Exception {
 
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("code", custCode);
@@ -193,6 +193,13 @@ public class CGService implements ICGService {
                                      ccAddress, ccCity, ccState, ccCountry);
 		}
 
+        if(taxExempt) {
+            paramMap.put("isVatExempt", "1");
+        }
+        else {
+            paramMap.put("isVatExempt", "0");
+        }
+
 		Document doc = makeServiceCall("/customers/new/productCode/" + getProductCode(), paramMap, CC_PROCESSING_TIMEOUT);
 		Element root = doc.getDocumentElement();
 		Element customer = XmlUtils.getFirstChildByTagName(root, "customer");
@@ -205,14 +212,14 @@ public class CGService implements ICGService {
 			String ccCardCode, String ccZip) throws Exception {
         return updateCustomerAndSubscription(custCode, firstName, lastName, email, company, subscriptionPlanCode,
                                                 ccFirstName, ccLastName, ccNumber, ccExpireMonth, ccExpireYear, ccCardCode,
-                                                ccZip, null, null, null, null);
+                                                ccZip, null, null, null, null, false);
     }
 
     public CGCustomer updateCustomerAndSubscription(String custCode, String firstName, String lastName,
                                                     String email, String company, String subscriptionPlanCode, String ccFirstName,
                                                     String ccLastName, String ccNumber, String ccExpireMonth, String ccExpireYear,
                                                     String ccCardCode, String ccZip, String ccAddress, String ccCity,
-                                                    String ccState, String ccCountry) throws Exception {
+                                                    String ccState, String ccCountry, boolean taxExempt) throws Exception {
 
 		HashMap<String, String> paramMap = new HashMap<String, String>();
 		paramMap.put("firstName", firstName);
@@ -231,6 +238,13 @@ public class CGService implements ICGService {
                                      ccExpireMonth, ccExpireYear, ccCardCode, ccZip,
                                      ccAddress, ccCity, ccState, ccCountry);
 		}
+
+        if(taxExempt) {
+            paramMap.put("isVatExempt", "1");
+        }
+        else {
+            paramMap.put("isVatExempt", "0");
+        }
 
 		Document doc = makeServiceCall("/customers/edit/productCode/" + getProductCode() + "/code/" + custCode, paramMap, CC_PROCESSING_TIMEOUT);
 		Element root = doc.getDocumentElement();
