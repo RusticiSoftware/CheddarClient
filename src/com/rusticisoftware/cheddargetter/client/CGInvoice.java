@@ -28,17 +28,18 @@
 
 package com.rusticisoftware.cheddargetter.client;
 
+import org.w3c.dom.Element;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.w3c.dom.Element;
-
 public class CGInvoice implements Serializable {
 	protected String id;
 	protected String number;
 	protected String type;
+    protected double taxRate;
 	protected Date billingDatetime;
 	protected Date createdDatetime;
 	protected List<CGTransaction> transactions = new ArrayList<CGTransaction>();
@@ -71,12 +72,38 @@ public class CGInvoice implements Serializable {
 	public List<CGCharge> getCharges() {
 		return charges;
 	}
-	
-	public double getTotalAmount(){
+
+    public double getTaxRate() {
+        return taxRate;
+    }
+
+    public double getTaxAmount() {
+        if(taxRate == 0) {
+            return 0;
+        }
+        double ret = getTotalAmount();
+
+        ret = (ret * (taxRate / 100.0));
+
+        return ret;
+    }
+
+    public double getTotalAmount(){
+        double sum = 0.0d;
+        for(CGCharge charge : charges){
+            sum += charge.getEachAmount() * charge.getQuantity();
+        }
+        return sum;
+    }
+
+	public double getTotalAmountWithTax(){
 		double sum = 0.0d;
 		for(CGCharge charge : charges){
 			sum += charge.getEachAmount() * charge.getQuantity();
 		}
+        if(taxRate > 0) {
+            sum += (sum * (taxRate / 100.0));
+        }
 		return sum;
 	}
 
@@ -84,6 +111,12 @@ public class CGInvoice implements Serializable {
 		this.id = elem.getAttribute("id");
 		this.number = XmlUtils.getNamedElemValue(elem, "number");
 		this.type = XmlUtils.getNamedElemValue(elem, "type");
+        try {
+            this.taxRate = Double.parseDouble(XmlUtils.getNamedElemValue(elem, "vatRate"));
+        }
+        catch(Exception e) {
+            this.taxRate = 0.0;
+        }
 		this.billingDatetime = CGService.parseCgDate(XmlUtils.getNamedElemValue(elem, "billingDatetime"));
 		this.createdDatetime = CGService.parseCgDate(XmlUtils.getNamedElemValue(elem, "createdDatetime"));
 		
