@@ -83,7 +83,7 @@ public class CGInvoice implements Serializable {
         }
         double ret = getTotalAmount();
 
-        ret = (ret * (taxRate / 100.0));
+        ret = (ret * taxRate);
 
         return ret;
     }
@@ -102,7 +102,7 @@ public class CGInvoice implements Serializable {
 			sum += charge.getEachAmount() * charge.getQuantity();
 		}
         if(taxRate > 0) {
-            sum += (sum * (taxRate / 100.0));
+            sum += (sum * taxRate);
         }
 		return sum;
 	}
