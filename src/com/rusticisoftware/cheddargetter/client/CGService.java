@@ -233,11 +233,9 @@ public class CGService implements ICGService {
 		
 		//If plan is free, no cc information needed, so we just check
 		//ccNumber field and assume the rest are there or not
-		if(ccNumber != null){
-            BuildCreditCardParams(paramMap, ccFirstName, ccLastName, ccNumber,
-                                     ccExpireMonth, ccExpireYear, ccCardCode, ccZip,
-                                     ccAddress, ccCity, ccState, ccCountry);
-		}
+        BuildCreditCardParams(paramMap, ccFirstName, ccLastName, ccNumber,
+                                 ccExpireMonth, ccExpireYear, ccCardCode, ccZip,
+                                 ccAddress, ccCity, ccState, ccCountry);
 
         if(taxExempt) {
             paramMap.put("isVatExempt", "1");
@@ -255,10 +253,21 @@ public class CGService implements ICGService {
     private void BuildCreditCardParams(HashMap<String, String> paramMap, String ccFirstName, String ccLastName,
                                        String ccNumber, String ccExpireMonth, String ccExpireYear, String ccCardCode,
                                        String ccZip, String ccAddress, String ccCity, String ccState, String ccCountry) {
-        paramMap.put("subscription[ccFirstName]", ccFirstName);
-        paramMap.put("subscription[ccLastName]", ccLastName);
-        paramMap.put("subscription[ccNumber]", stripCcNumber(ccNumber));
-        paramMap.put("subscription[ccExpiration]", ccExpireMonth + "/" + ccExpireYear);
+        if(ccFirstName != null) {
+            paramMap.put("subscription[ccFirstName]", ccFirstName);
+        }
+
+        if(ccLastName != null) {
+            paramMap.put("subscription[ccLastName]", ccLastName);
+        }
+
+        if(ccNumber != null) {
+            paramMap.put("subscription[ccNumber]", stripCcNumber(ccNumber));
+        }
+
+        if(ccExpireMonth != null && ccExpireYear != null) {
+            paramMap.put("subscription[ccExpiration]", ccExpireMonth + "/" + ccExpireYear);
+        }
 
         if(ccCardCode != null){
             paramMap.put("subscription[ccCardCode]", ccCardCode);
