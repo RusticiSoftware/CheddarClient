@@ -32,8 +32,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.apache.commons.codec.binary.Base64;
 
-import sun.misc.BASE64Encoder;
-
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
