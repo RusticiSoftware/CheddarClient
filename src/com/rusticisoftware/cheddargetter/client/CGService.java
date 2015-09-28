@@ -30,7 +30,7 @@ package com.rusticisoftware.cheddargetter.client;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.*;
 import java.net.HttpURLConnection;
@@ -508,7 +508,7 @@ public class CGService implements ICGService {
 		
 		try {
 			//Put authentication fields in http header, and make the data the body
-			BASE64Encoder enc = new BASE64Encoder();
+			Base64 enc = new Base64(0);
 			//connection.setRequestProperty("Content-Type", "text/xml");
 			String auth = userName + ":" + password;
 			connection.setRequestProperty("Authorization", "Basic " + enc.encode(auth.getBytes()));
