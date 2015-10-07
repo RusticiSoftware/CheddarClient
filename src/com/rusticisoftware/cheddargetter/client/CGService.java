@@ -511,7 +511,7 @@ public class CGService implements ICGService {
 			Base64 enc = new Base64(0);
 			//connection.setRequestProperty("Content-Type", "text/xml");
 			String auth = userName + ":" + password;
-			connection.setRequestProperty("Authorization", "Basic " + enc.encode(auth.getBytes()));
+			connection.setRequestProperty("Authorization", "Basic " + new String(enc.encode(auth.getBytes())));
 			
 			
 			connection.setRequestMethod("POST");
